@@ -1,5 +1,7 @@
 matplotlib~=3.3.3
+mosestokenizer~=1.2.1
 numpy~=1.20.2
 pandas~=1.2.4
 py4j~=0.10.9.1
 scipy~=1.6.0
+tqdm~=4.65.0

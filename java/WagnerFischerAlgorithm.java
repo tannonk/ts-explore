@@ -22,7 +22,7 @@ public class WagnerFischerAlgorithm {
 
         for (Change change : changes)
             if (change.type != Change.KEEP) {
-                result += operations.get(change.type) + "," + change.replaced + "," + change.replacement + "\t";
+                result += operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement + "\t";
             }
 
         return result.substring(0, result.length() - 1);
@@ -47,7 +47,7 @@ public class WagnerFischerAlgorithm {
         int result = 0;
         for (Change change : changes)
             if (change.type != Change.KEEP) {
-                System.out.println(operations.get(change.type) + "," + change.replaced + "," + change.replacement);
+                System.out.println(operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement);
                 result++;
             }
 
