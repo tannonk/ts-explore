@@ -263,3 +263,18 @@ If you use our results and scripts in your research, please cite our work:
     pages = "57--69",
 }
 ```
+
+## Changes for processing LLM simplification outputs
+
+We have added the script `annotate_operations.py` to process one or more jsonl input files.
+The infiles should contain a json object on each line containing source and target text pairs. 
+The script writes a new jsonl file at the same location with the extension `.editops` containing the resulting annotations. 
+Lines in the input file correspond to lines in the output file.
+
+As input the script takes either a single JSONL file or a directory containing multiple JSONL files.
+
+To run, first launch the java server in a seperate terminal (following step 4 above), then run:
+
+```bash
+python annotate_operations.py ../llm_simplification_results/ground_truth -s source -t model_output
+```
