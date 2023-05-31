@@ -3,7 +3,7 @@ import argparse
 from tqdm import tqdm
 import json
 from pathlib import Path
-from mosestokenizer import *
+from mosestokenizer import MosesTokenizer
 
 from py4j.java_gateway import JavaGateway
 
@@ -16,7 +16,7 @@ def parse_args():
     return ap.parse_args()
 
 def get_outfile(input_file: str) -> str:
-    outfile = str(Path(input_file).parent / f"{Path(input_file).stem}.editops")
+    outfile = str(Path(input_file).with_suffix('.editops'))
     return outfile
 
 def result_to_dict(input_string: str) -> List[Dict[str, Union[str, None]]]:
@@ -24,8 +24,11 @@ def result_to_dict(input_string: str) -> List[Dict[str, Union[str, None]]]:
     input_string = "DELETE,is,null\tDELETE,composed,null"
     output_dict = {["operation": "DELETE", "source": "is", "target": null], ["operation": "DELETE", "source": "composed", "target": null]}
     """
-    return [{'operation': op, 'source': src, 'target': None if tgt.lower() == 'null' else tgt}
-            for op, src, tgt in (substr.split('|||') for substr in input_string.split("\t"))]
+    if input_string == '':
+        return [{'operation': None, 'source': None, 'target': None}]
+    else:
+        return [{'operation': op, 'source': src, 'target': None if tgt.lower() == 'null' else tgt}
+                for op, src, tgt in (substr.split('|||') for substr in input_string.split("\t"))]
 
 def main(args):
 

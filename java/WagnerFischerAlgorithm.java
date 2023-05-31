@@ -25,7 +25,12 @@ public class WagnerFischerAlgorithm {
                 result += operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement + "\t";
             }
 
-        return result.substring(0, result.length() - 1);
+        // return result.substring(0, result.length() - 1);
+        if (result.length() > 0) {
+            return result.substring(0, result.length() - 1);
+        } else {
+            return result;
+        }
     }
 
     public double calculate(String source, String destination, String type) {
