@@ -20,11 +20,14 @@ public class WagnerFischerAlgorithm {
         List<Change> changes = computeDistancePath(source, destination);
         String result = "";
 
-        for (Change change : changes)
-            if (change.type != Change.KEEP) {
-                result += operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement + "\t";
+        // for (Change change : changes)
+        //     if (change.type != Change.KEEP) {
+        //         result += operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement + "\t";
+        //     }
+        for (Change change : changes) {
+            result += operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement + "\t";
             }
-
+    
         // return result.substring(0, result.length() - 1);
         if (result.length() > 0) {
             return result.substring(0, result.length() - 1);
@@ -50,11 +53,16 @@ public class WagnerFischerAlgorithm {
     public double computeDistance(Object[] source, Object[] destination) {
         List<Change> changes = computeDistancePath(source, destination);
         int result = 0;
-        for (Change change : changes)
-            if (change.type != Change.KEEP) {
-                System.out.println(operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement);
-                result++;
+        for (Change change : changes) {
+            System.out.println(operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement);
+            result++;
             }
+
+        // for (Change change : changes)
+        //     if (change.type != Change.KEEP) {
+        //         System.out.println(operations.get(change.type) + "|||" + change.replaced + "|||" + change.replacement);
+        //         result++;
+        //     }
 
         return result;
     }

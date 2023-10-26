@@ -27,6 +27,7 @@ def parse_args():
     ap.add_argument("input_dir_or_file", type=str, default=None, help="path to directory containing multiple jsonl files or a single jsonl file to be annotated")
     ap.add_argument("-s", "--source_key", type=str, default="source", help="key in jsonl file for source sentence")
     ap.add_argument("-t", "--target_key", type=str, default="model_output", help="key in jsonl file for target sentence")
+    ap.add_argument("-v", "--verbose", action="store_true", help="print verbose output")
     return ap.parse_args()
 
 def get_outfile(input_file: str) -> str:
@@ -44,7 +45,7 @@ def result_to_dict(input_string: str) -> List[Dict[str, Union[str, None]]]:
         return [{'operation': op, 'source': src, 'target': None if tgt.lower() == 'null' else tgt}
                 for op, src, tgt in (substr.split('|||') for substr in input_string.split("\t"))]
 
-def annotate_file(input_file, source_key='source', target_key='model_output'):
+def annotate_file(input_file, source_key='source', target_key='model_output', verbose=False):
 
     gateway = JavaGateway()
     edit_distance = gateway.entry_point.getEditDistance()
@@ -55,7 +56,7 @@ def annotate_file(input_file, source_key='source', target_key='model_output'):
     
     with open(input_file, 'r', encoding='utf8') as inf:
         with open(outfile, 'w', encoding='utf8') as outf:
-            for line in tqdm(inf, desc=f"Annotating edit operations in {input_file}"):
+            for line in tqdm(inf, desc=f"Annotating edit operations in {input_file}" if verbose else None, disable=not verbose):
                 data = json.loads(line.strip())
                 source, target = ' '.join(tokenize(data[source_key])), ' '.join(tokenize(data[target_key]))
                 result = edit_distance.calculate_all(source, target)
@@ -64,14 +65,20 @@ def annotate_file(input_file, source_key='source', target_key='model_output'):
                 outf.write(json.dumps(result, ensure_ascii=False) + "\n")
 
     tokenize.close()
-
-    print(f"Edit operations written to {outfile}")
+    if verbose:
+        print(f"Edit operations written to {outfile}")
     
 if __name__ == "__main__":
     args = parse_args()
     
     if Path(args.input_dir_or_file).is_dir():
+        c = 0
         for infile in Path(args.input_dir_or_file).glob('*.jsonl'):
-            annotate_file(infile, args.source_key, args.target_key)
+            annotate_file(infile, args.source_key, args.target_key, args.verbose)
+            c += 1
+        if c == 0:
+            raise ValueError(f"No jsonl files found in {args.input_dir_or_file}")
+        else:
+            print(f"Processed {c} files in {args.input_dir_or_file}")
     else:
-        annotate_file(args.input_dir_or_file, args.source_key, args.target_key)
+        annotate_file(args.input_dir_or_file, args.source_key, args.target_key, args.verbose)
